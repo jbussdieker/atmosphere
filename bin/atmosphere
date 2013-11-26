@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+require 'atmosphere'
+
+unless ARGV.length == 1
+  puts "usage: atmosphere SCRIPT"
+  puts
+  exit 1
+end
+
+script_file = ARGV[0]
+unless File.exists? script_file
+  puts "Error: unable to locate script file (#{script_file})"
+  puts
+  exit 1
+else
+  script = File.read(script_file)
+  atmosphere = Atmosphere::DSL.new
+  atmosphere.instance_eval(script)
+end
