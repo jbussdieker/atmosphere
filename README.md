@@ -1,5 +1,7 @@
 # Atmosphere
 
+[![Gem Version](https://badge.fury.io/rb/atmosphere.png)](http://badge.fury.io/rb/atmosphere)
+
 Cloud infrastructure builder.
 
 ## Installation
