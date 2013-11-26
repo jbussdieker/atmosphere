@@ -1,4 +1,5 @@
 require "atmosphere/version"
+require "atmosphere/project"
 require "atmosphere/dsl"
 
 module Atmosphere

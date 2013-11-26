@@ -1,19 +1,34 @@
 #!/usr/bin/env ruby
 require 'atmosphere'
 
-unless ARGV.length == 1
-  puts "usage: atmosphere SCRIPT"
+def print_usage
+  puts "usage: atmosphere COMMAND"
   puts
+  puts "  commands: new, run"
+  puts
+end
+
+unless ARGV.length > 0
+  print_usage
   exit 1
 end
 
-script_file = ARGV[0]
-unless File.exists? script_file
-  puts "Error: unable to locate script file (#{script_file})"
-  puts
-  exit 1
+command = ARGV[0]
+
+if command == "new"
+  Atmosphere::Project.create(ARGV[1])
+elsif command == "run"
+  script_file = "manifest.rb"
+  unless File.exists? script_file
+    puts "Error: unable to locate script file (#{script_file})"
+    puts
+    exit 1
+  else
+    script = File.read(script_file)
+    atmosphere = Atmosphere::DSL.new
+    atmosphere.instance_eval(script)
+  end
 else
-  script = File.read(script_file)
-  atmosphere = Atmosphere::DSL.new
-  atmosphere.instance_eval(script)
+  print_usage
+  exit 1
 end
