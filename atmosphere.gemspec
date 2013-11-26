@@ -8,7 +8,6 @@ Gem::Specification.new do |spec|
   spec.version       = Atmosphere::VERSION
   spec.authors       = ["Joshua Bussdieker"]
   spec.email         = ["jbussdieker@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
   spec.summary       = %q{Cloud infrastructure builder}
   spec.homepage      = "https://github.com/jbussdieker/atmosphere"
   spec.license       = "MIT"
