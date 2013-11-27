@@ -1,20 +1,30 @@
 module Atmosphere
-  class Aws
-    class SecurityGroup
-      attr_accessor :name, :region
+  class Aws < Hash
+    class SecurityGroup < Hash
+      attr_accessor :region
 
-      def initialize(region, sg)
+      def initialize(region, name)
         @region = region
-        @sg = sg
-        @name = sg.name
+        self[:name] = name
       end
 
-      def client
-        @sg
+      def name
+        self[:name]
       end
 
       def logger
         Atmosphere.logger
+      end
+
+      def client
+        sg = @region.client.security_groups.find {|sg| sg.name == name}
+        if sg
+          logger.debug "Already exists #{sg.id}"
+        else
+          logger.info "Created security group #{name}"
+          sg = @region.client.security_groups.create(name)
+        end
+        sg
       end
 
       def allow_cidr(cidr, protocol, range)

@@ -1,9 +1,14 @@
 require 'atmosphere/aws'
 
 module Atmosphere
-  class DSL
+  class DSL < Hash
+    def providers
+      self[:providers] ||= {}
+    end
+
     def aws(*args, &block)
-      Aws.new(*args).tap do |aws|
+      providers[:aws] ||= Aws.new(*args)
+      providers[:aws].tap do |aws|
         aws.instance_exec(&block) if block_given?
       end
     end

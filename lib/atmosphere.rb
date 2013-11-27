@@ -5,7 +5,7 @@ require "atmosphere/dsl"
 module Atmosphere
   def self.logger
     Logger.new(STDOUT).tap do |l|
-      l.level = Logger::DEBUG
+      l.level = Logger::ERROR
     end
   end
 end

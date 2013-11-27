@@ -2,19 +2,47 @@ require 'net/ssh'
 require 'net/scp'
 
 module Atmosphere
-  class Aws
-    class Instance
-      def initialize(region, instance)
+  class Aws < Hash
+    class Instance < Hash
+      def initialize(region, name, options = {})
         @region = region
-        @instance = instance
+        self[:name] = name
+        options.each do |k, v|
+          self[k] = v
+        end
       end
 
       def logger
         Atmosphere.logger
       end
 
+      def client
+        instance = nil
+        AWS.memoize do
+          @region.client.instances.each do |check_instance|
+            if check_instance.tags["Name"] == name
+              if check_instance.status != :terminated && check_instance.status != :shutting_down
+                instance = check_instance 
+              end
+            end
+          end
+        end
+        unless instance
+          instance = @region.client.instances.create(args)
+          logger.info "Created instance #{name}"
+          logger.info "  Public IP:  #{instance.public_ip_address}"
+          logger.info "  Private IP: #{instance.private_ip_address}"
+          instance.tags["Name"] = name
+        else
+          logger.info "Found instance #{name}"
+          logger.info "  Public IP:  #{instance.public_ip_address}"
+          logger.info "  Private IP: #{instance.private_ip_address}"
+        end
+        instance
+      end
+
       def ready?
-        @instance.status == :running
+        client.status == :running
       end
 
       def wait_ready
@@ -47,7 +75,7 @@ module Atmosphere
       private
 
       def ssh_options
-        key_pair = @region.key_pair(@instance.key_name)
+        key_pair = @region.key_pair(client.key_name)
         {
           :host_key => "ssh-rsa",
           :encryption => "blowfish-cbc",

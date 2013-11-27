@@ -27,6 +27,7 @@ elsif command == "run"
     script = File.read(script_file)
     atmosphere = Atmosphere::DSL.new
     atmosphere.instance_eval(script)
+    puts atmosphere.to_json
   end
 else
   print_usage
